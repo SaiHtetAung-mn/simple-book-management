@@ -1,0 +1,40 @@
+<div class="modal-wrapper" id="add-book-modal">
+    <div class="modal-form-wrapper">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Add new book</h2>
+                <span class="modal-close" id="add-book-modal-close-btn">&times;</span>
+            </div>
+            <form class="modal-body" id="add-book-modal-form">
+                <div class="form-gp">
+                    <label>ISBN-No</label>
+                    <input type="text" class="text-input" id="add-book-modal-isbn"/>
+                </div>
+                <div class="form-gp">
+                    <label>Book title</label>
+                    <input type="text" class="text-input" id="add-book-modal-title"/>
+                </div>
+                <div class="form-gp">
+                    <label>Author name</label>
+                    <input type="text" class="text-input" id="add-book-modal-author"/>
+                </div>
+                <div class="form-gp">
+                    <label>Category</label>
+                    <select id="add-book-modal-category">
+                        <% categories.forEach(category => {%>
+                            <option value="<%= category.id%>"><%=category.name%></option>
+                        <%})%>
+                    </select>
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="add-book-modal-submit-btn">
+                    Add
+                </button>
+                <button class="btn btn-close" id="add-book-modal-clear-btn">
+                    Clear
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

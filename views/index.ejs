@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="stylesheet" href="/public/css/index.css"/>
+        <link rel="stylesheet" href="/public/css/add-book.css"/>
+    </head>
+    <body>
+        <%- include('add-book.ejs'); %>
+        <%- include('update-book.ejs'); %>
+        <div class="wrapper">
+            <h1 class="title">Book directory</h1>
+            <div class="action-bar">
+                <button class="btn btn-primary" id="add-book-btn">Add new book</button>
+            </div>
+            <div class="main-content">
+                <div class="action-bar table-action-bar">
+                    <div class="option-bar left-option-bar">
+                        <div class="input-group">
+                            <label for="category-filter">Filter by category:</label>
+                            <select id="category-filter">
+                                <option value="all">All</option>
+                                <% categories.forEach(category => {%>
+                                    <option value="<%=category.id%>">
+                                        <%=category.name%>
+                                    </option>
+                                <%})%>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="option-bar right-option-bar">
+                        <div class="input-group">
+                            <label>Search by title:</label>
+                            <input 
+                                type="search" 
+                                class="text-input search-input" 
+                                id="book-search"
+                                placeholder="Book title"
+                            />
+                        </div>
+                    </div>
+                </div>
+                <span class="search-result" id="search-result">Search results:</span>
+                <div class="table-wrapper">
+                    <table border="1">
+                        <thead>
+                            <tr>
+                                <th>ISBN-No</th>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Category</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="book-table-body">
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="/public/scripts/index.js"></script>
+    </body>
+</html>
