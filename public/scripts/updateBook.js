@@ -38,7 +38,6 @@ async function updateBook() {
     }
 
     if(Object.keys(updatedBook).length !== 0) {
-        console.log('update');
         updatedBook.id = iniBook.id;
         submitUpdatedBook(updatedBook);
     }

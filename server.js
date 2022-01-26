@@ -1,5 +1,6 @@
 const http = require('http');
 const express = require('express');
+const ErrorHandler = require('./middleware/ErrorHandler');
 let server_instance = null;
 
 // Routers
@@ -27,13 +28,19 @@ class Server {
         this.app.set('view engine', 'ejs');
         this.app.use(express.json());
         this.app.use("/public", express.static(__dirname+"/public"));
+
+        // listen for process uncaught error
+        ErrorHandler.listenUncaughtError(this.server);
     }
     handleRoute() {
         this.app.use('/', indexRouter);
-        this.app.use('/books', bookRouter);
+        this.app.use('/api/books', bookRouter);
 
-        // Route exception
-        this.app.all("/*", (req, res, next) => res.status(404).end());
+        // Page not found route
+        this.app.get("/*", (req, res, next) => res.status(404).end('Page not found'));
+
+        // Error middleware
+        this.app.use(ErrorHandler.handleError);
     }
     listen() {
         this.server.listen(this.port, () => {

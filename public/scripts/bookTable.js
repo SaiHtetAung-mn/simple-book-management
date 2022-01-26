@@ -1,5 +1,6 @@
 import * as addBookModal from './addBook.js';
 import * as updateBookModal from './updateBook.js';
+import * as confirmModal from './confirmModal.js';
 
 const book_table_body = document.getElementById('book-table-body');
 const add_book_btn = document.getElementById('add-book-btn');
@@ -19,8 +20,8 @@ function initEventListener() {
 }
 
 export async function fetchBooks(categoryIdToFilter=null, titleToSearch=null) {
-    let url = '/books';
-    if(categoryIdToFilter) {
+    let url = '/api/books';
+    if(categoryIdToFilter && categoryIdToFilter != 'all') {
         url += `?filter[category]=${categoryIdToFilter}`;
     }
     else if(titleToSearch) {
@@ -30,11 +31,17 @@ export async function fetchBooks(categoryIdToFilter=null, titleToSearch=null) {
         method: 'GET'
     };
     try {
-        let books = await (await fetch(url, options)).json();
-        renderAllBooks(books);
+        let res = await fetch(url, options);
+        if(res.ok) {
+            let books = await res.json();
+            renderAllBooks(books);
+        }
+        else {
+            throw new Error('Server error! books not loaded successfully');
+        }
     }
     catch(err) {
-        console.log(err.message);
+        alert(err.message);
     }
 }
 
@@ -102,7 +109,9 @@ function createTableActionBtn(book, actionType) {
         button.classList.add('table-delete-btn');
         button.innerText = 'Delete';
         button.addEventListener('click', () => {
-            deleteBook(book.id);
+            confirmModal.openModal('Delete', 'Are you sure delete this book', () => {
+                deleteBook(book.id);
+            });
         });
     }
     else {
@@ -117,7 +126,7 @@ function createTableActionBtn(book, actionType) {
 }
 
 export async function submitNewBook(book) {
-    const url = '/books';
+    const url = '/api/books';
     try {
         const options = {
             method: 'POST',
@@ -126,8 +135,15 @@ export async function submitNewBook(book) {
             },
             body: JSON.stringify(book)
         };
-        let newBook = await (await fetch(url, options)).json();
-        renderOneBook(newBook);
+
+        let res = await fetch(url, options);
+        let resData = await res.json();
+        if(res.ok) {
+            renderOneBook(resData);
+        }
+        else {
+            throw new Error(resData.error?.message || '');
+        }
     }
     catch(err) {
         console.log(err.message);
@@ -136,7 +152,7 @@ export async function submitNewBook(book) {
 
 export async function submitUpdatedBook(book={}) {
     try {
-        const url = `/books/${book.id ?? ''}`;
+        const url = `/api/books/${book.id ?? ''}`;
         const options = {
             method: 'PUT',
             headers: {
@@ -149,9 +165,13 @@ export async function submitUpdatedBook(book={}) {
             let category_id = category_filter.value; // Current filter value
             fetchBooks(category_id, null);
         }
+        else {
+            let err = await res.json();
+            throw new Error(err.error?.message || '');
+        }
     }
     catch(err) {
-        console.log(err);
+        console.log(err.message);
     }
 }
 
@@ -160,14 +180,20 @@ export function updateBook(book) {
 }
 
 export async function deleteBook(id) {
-    const url = `/books/${id}`;
+    const url = `/api/books/${id}`;
     const options = {
         method: 'DELETE'
     };
 
     try {
-        if((await fetch(url, options)).ok) {
-            fetchBooks();
+        let res = await fetch(url, options);
+        if(res.ok) {
+            let category_id = category_filter.value; // Current filter value
+            fetchBooks(category_id, null);
+        }
+        else {
+            let err = await res.json();
+            throw new Error(err.error?.message || '');
         }
     }
     catch(err) {

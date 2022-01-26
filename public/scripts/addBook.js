@@ -26,21 +26,14 @@ function initialize() {
 }
 
 async function addBook() {
-    try {
-        const book = {
-            isbn: isbn.value, 
-            title: title.value, 
-            author: author.value, 
-            category_id: category.value
-        };
-        submitNewBook(book);
-    } 
-    catch(err) {
-        console.log(err.message);
-    }
-    finally {
-        closeModal();
-    }
+    const book = {
+        isbn: isbn.value, 
+        title: title.value, 
+        author: author.value, 
+        category_id: category.value
+    };
+    submitNewBook(book);
+    closeModal();
 }
 
 export function openModal() {

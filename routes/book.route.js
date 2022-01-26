@@ -1,10 +1,13 @@
 const express = require('express');
-const {Book} = require('../lib/book');
-const database = require('../lib/database');
+const AcceptMiddleware = require('../middleware/Accept');
+const database = require('../lib/Database');
+const BassError = require('../lib/BaseError');
 const bookRouter = express.Router();
 
+bookRouter.use(AcceptMiddleware);
+
 bookRouter.route('/')
-.get(async (req, res) => {
+.get(async (req, res, next) => {
     try {
         let b = {};
         if(req.query.filter) {
@@ -21,18 +24,17 @@ bookRouter.route('/')
         res.status(200).json(b);
     }
     catch(err) {
-        console.log(err);
-        res.status(500).end();
+        next(err);
     }
 })
 
-.post(async (req, res) => {
+.post(async (req, res, next) => {
     let book = req.body;
     try {
         let book_props = ['isbn', 'title', 'author', 'category_id'];
         let isEveryProp = book_props.every(prop => book.hasOwnProperty(prop));
         if(!isEveryProp) {
-            return res.status(400).end();
+            return next(new BassError(400, true, 'Incorrect parameter'));
         }
         let addedBook = await database.insertOneBook(book);
         let category = await database.getCategoryById(addedBook['category_id']);
@@ -42,11 +44,11 @@ bookRouter.route('/')
         }
     }
     catch(err) {
-        res.status(500).end();
+        next(err);
     }
 })
 
-bookRouter.delete('/:id', async (req, res) => {
+bookRouter.delete('/:id', async (req, res, next) => {
     try {
         let id = req.params.id;
         let isDone = await database.deleteBookById(id);
@@ -56,24 +58,19 @@ bookRouter.delete('/:id', async (req, res) => {
         res.status(200).end();
     }
     catch(err) {
-        console.log(err);
-        res.status(400).end();
+        next(err);
     }
 })
 
-.put('/:id', async (req, res) => {
+.put('/:id', async (req, res, next) => {
     try {
         let isDone = await database.updateBookById(req.params.id, req.body ?? {});
         if(isDone) {
             res.status(200).end();
         }
-        else {
-            res.status(400).end();
-        }
     }
     catch(err) {
-        console.log(err);
-        res.status(500).end();
+        next(err);
     }
 })
 

@@ -16,13 +16,21 @@
 }
 
 .modal {
-    width: 40%;
     height: auto;
     margin: auto;
     background-color: white;
+    border-radius: 5px;
     animation-name: modal-open-animation;
     animation-duration: .2s;
     animation-timing-function: linear;
+}
+
+.book-modal {
+    width: 40%;
+}
+
+.confirm-modal {
+    width: 30%;
 }
 
 @keyframes modal-open-animation {
