@@ -8,8 +8,6 @@ const indexRouter = require('./routes/index.route');
 const bookRouter = require('./routes/book.route');
 
 class Server {
-    port = process.env.port || 3000;
-
     constructor() {
         if(!server_instance || !(server_instance instanceof Server)) {
             server_instance = this;
@@ -21,6 +19,7 @@ class Server {
     }
 
     initApp() {
+        this.port = process.env.port || 3000;
         this.app = express();
         this.server = http.createServer(this.app);
     }
