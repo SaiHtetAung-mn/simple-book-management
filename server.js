@@ -19,7 +19,7 @@ class Server {
     }
 
     initApp() {
-        this.port = process.env.port || 3000;
+        this.port = process.env.port || 4000;
         this.app = express();
         this.server = http.createServer(this.app);
     }
